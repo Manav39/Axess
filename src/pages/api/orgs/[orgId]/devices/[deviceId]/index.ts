@@ -14,7 +14,7 @@ import {DeleteDeviceParams, UpdateDeviceRequestBody, UpdateDeviceRequestParams} 
 import {STRLEN_NZ, VALID_DEVICE_ID, VALID_ORG_ID, VALID_PERM_LEVEL} from "@/utils/validatorUtils";
 import {UserPermissionLevel} from "@/utils/types";
 import {db} from "@/utils/db";
-import {ORGS_DEVICE_COLLECTION_NAME, ORGS_DOC_COLLECTION_NAME} from "@/utils/common";
+import {createLogEvent, ORGS_DEVICE_COLLECTION_NAME, ORGS_DOC_COLLECTION_NAME} from "@/utils/common";
 import {withMethodDispatcher} from "@/utils/methodDispatcher";
 
 type DeviceDispatchBodyMap = {
@@ -51,7 +51,18 @@ async function deleteDevice(req: CustomApiRequest<{}, DeleteDeviceParams>, res: 
 	const orgDoc = orgCollection.doc(orgId)
 	const devicesCollection = orgDoc.collection(ORGS_DEVICE_COLLECTION_NAME)
 	const deviceDoc = devicesCollection.doc(deviceId)
+	const docData = await deviceDoc.get()
+	const {permissionLevel, deviceName} = docData.data()!
 	await deviceDoc.delete()
+	
+	await createLogEvent({
+		eventType: "DEVICE_DELETE",
+		eventData: {
+			permissionLevel: permissionLevel,
+			deviceName: deviceName,
+			deviceUUID: deviceId
+		}
+	})
 	
 	res.status(200).json({
 		requestStatus: "SUCCESS"
@@ -91,6 +102,15 @@ async function updateDevice(req: CustomApiRequest<UpdateDeviceRequestBody, Updat
 	await deviceDoc.set({
 		deviceName: deviceName,
 		permissionLevel: permissionLevel
+	})
+	
+	await createLogEvent({
+		eventType: "DEVICE_UPDATE",
+		eventData: {
+			permissionLevel: permissionLevel,
+			deviceName: deviceName,
+			deviceUUID: deviceId
+		}
 	})
 	
 	res.status(200).json({

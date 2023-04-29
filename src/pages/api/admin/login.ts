@@ -5,39 +5,30 @@ import {
 	requireBodyValidators,
 	requireMethods,
 	requireMiddlewareChecks,
-	requireQueryParams,
-	requireQueryParamValidators,
 	requireValidBody
 } from "@/utils/customMiddleware";
-import {LoginUserRequestBody, LoginUserRequestParams} from "@/utils/types/apiRequests";
 import {db} from "@/utils/db";
-import {STRLEN_NZ, VALID_ORG_ID} from "@/utils/validatorUtils";
-import {
-	createLogEvent,
-	ORGS_DOC_COLLECTION_NAME,
-	ORGS_USERS_COLLECTION_NAME,
-	USER_ID_PROPERTY_NAME,
-	USER_PASS_PROPERTY_NAME
-} from "@/utils/common";
+import {STRLEN_NZ} from "@/utils/validatorUtils";
+import {createLogEvent, SUDO_COLLECTION_NAME, USER_ID_PROPERTY_NAME, USER_PASS_PROPERTY_NAME} from "@/utils/common";
 import {LoginUserResponse} from "@/utils/types/apiResponses";
 import {sign} from "jsonwebtoken";
-import {DecodedJWTCookie} from "@/utils/types";
+import {DecodedJWTCookie, UserPermissionLevel} from "@/utils/types";
+import {LoginAdminRequestBody} from "@/utils/types/apiRequests";
 
-export default async function loginUser(req: CustomApiRequest<LoginUserRequestBody, LoginUserRequestParams>, res: CustomApiResponse) {
+export default async function loginUser(req: CustomApiRequest<LoginAdminRequestBody>, res: CustomApiResponse) {
 	const middlewareStatus = await requireMiddlewareChecks(
 		req,
 		res,
 		{
 			[requireMethods.name]: requireMethods("POST"),
 			[requireValidBody.name]: requireValidBody(),
-			[requireQueryParams.name]: requireQueryParams("orgId"),
-			[requireQueryParamValidators.name]: requireQueryParamValidators({
-				orgId: VALID_ORG_ID
-			}),
-			[requireBodyParams.name]: requireBodyParams("userId", "userPass"),
+			[requireBodyParams.name]: requireBodyParams("userId", "userPass", "adminSecret"),
 			[requireBodyValidators.name]: requireBodyValidators({
 				userId: STRLEN_NZ,
-				userPass: STRLEN_NZ
+				userPass: STRLEN_NZ,
+				adminSecret: (adminSecret: string) => {
+					return process.env.ADMIN_SECRET === adminSecret
+				}
 			})
 		}
 	)
@@ -49,10 +40,8 @@ export default async function loginUser(req: CustomApiRequest<LoginUserRequestBo
 	const {orgId} = req.query
 	const {userId, userPass} = req.body
 	
-	const orgCollection = db.collection(ORGS_DOC_COLLECTION_NAME)
-	const orgDoc = orgCollection.doc(orgId)
-	const orgUsersCollection = orgDoc.collection(ORGS_USERS_COLLECTION_NAME)
-	const orgUserQuery = orgUsersCollection.where(
+	const orgCollection = db.collection(SUDO_COLLECTION_NAME)
+	const orgUserQuery = orgCollection.where(
 		USER_ID_PROPERTY_NAME,
 		"==",
 		userId
@@ -73,24 +62,24 @@ export default async function loginUser(req: CustomApiRequest<LoginUserRequestBo
 	const selectedDoc = queryResponse.docs[0]
 	const docId = selectedDoc.id;
 	const docData = selectedDoc.data()
-	const {permissionLevel, userId: docUserId} = docData
+	const {userId: docUserId} = docData
 	
 	const signedCookie = sign(
 		{
-			permissionLevel: permissionLevel,
+			permissionLevel: UserPermissionLevel.SUPERUSER,
 			userId: docUserId,
 			userUUID: docId,
-			tokenType: "CLIENT"
+			tokenType: "SUDO"
 		} as DecodedJWTCookie,
 		process.env.JWT_SECRET!
 	)
 	
 	await createLogEvent({
-		eventType: "USER_LOGIN",
+		eventType: "SUDO_LOGIN",
 		eventData: {
 			userId: docUserId,
 			userUUID: docId,
-			permissionLevel: permissionLevel
+			permissionLevel: UserPermissionLevel.SUPERUSER,
 		}
 	})
 	
@@ -100,7 +89,7 @@ export default async function loginUser(req: CustomApiRequest<LoginUserRequestBo
 	).status(200).json<LoginUserResponse>({
 		requestStatus: "SUCCESS",
 		userId: docUserId,
-		permissionLevel: permissionLevel
+		permissionLevel: UserPermissionLevel.SUPERUSER
 	})
 	return
 }

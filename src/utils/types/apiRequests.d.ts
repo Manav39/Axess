@@ -10,6 +10,8 @@ export type LoginUserRequestBody = {
 
 export type LoginUserRequestParams = OrgIdCommonParam
 
+export type LogoutUserRequestParams = OrgIdCommonParam
+
 export type DeleteDeviceParams = OrgIdCommonParam & {
 	deviceId: string
 }
@@ -33,4 +35,18 @@ export type UpdateDeviceRequestParams = OrgIdCommonParam & {
 
 export type GetOrgDevicesParams = OrgIdCommonParam & {
 	devicePage?: string
+}
+
+export type CreateOrgBody = {
+	orgName: string,
+	adminCredentials: {
+		userId: string,
+		userPass: string
+	}
+}
+
+export type LoginAdminRequestBody = {
+	userId: string,
+	userPass: string,
+	adminSecret: string
 }

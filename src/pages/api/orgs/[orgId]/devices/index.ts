@@ -13,7 +13,7 @@ import {
 } from "@/utils/customMiddleware";
 import {CreateDeviceRequestBody, CreateDeviceRequestParams, GetOrgDevicesParams} from "@/utils/types/apiRequests";
 import {db} from "@/utils/db";
-import {ORGS_DEVICE_COLLECTION_NAME, ORGS_DOC_COLLECTION_NAME} from "@/utils/common";
+import {createLogEvent, ORGS_DEVICE_COLLECTION_NAME, ORGS_DOC_COLLECTION_NAME} from "@/utils/common";
 import {
 	ALLOW_UNDEFINED_WITH_FN,
 	GT_MIN_LT_MAX,
@@ -74,6 +74,16 @@ async function createDevice(req: CustomApiRequest<CreateDeviceRequestBody, Creat
 		deviceName,
 		permissionLevel
 	})
+	
+	await createLogEvent({
+		eventType: "DEVICE_CREATE",
+		eventData: {
+			permissionLevel: permissionLevel,
+			deviceName: deviceName,
+			deviceUUID: deviceUUID
+		}
+	})
+	
 	res.status(200).json<CreateDeviceResponse>({
 		requestStatus: "SUCCESS",
 		deviceId: deviceUUID

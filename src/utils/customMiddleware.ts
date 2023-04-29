@@ -202,6 +202,29 @@ function requirePermissionLevel(requiredLevel: UserPermissionLevel, exactLevel =
 	}
 }
 
+function requireSuperuser<T, P>(): MiddlewareFn<T, P> {
+	return async function (req, res, opts) {
+		const {middlewareCallStack, nextMiddleware} = opts
+		if (!middlewareCallStack.includes(requireAuthenticatedUser.name)) {
+			throw new Error(
+				"Superuser check was called without checking user authentication!"
+			)
+		}
+		
+		const currentUser = req.user!
+		const {tokenType} = currentUser
+		if (tokenType === "CLIENT") {
+			res.status(403).json({
+				requestStatus: "ERR_SUPERUSER_REQUIRED"
+			})
+			nextMiddleware(false)
+			return
+		}
+		nextMiddleware(true)
+		return
+	}
+}
+
 function requireBodyValidators<T, P>(validatorsToRun: ValidatorMapType<T>, skipBodyParamRequirement: boolean = false): MiddlewareFn<T, P> {
 	return async function (req: CustomApiRequest<T, P>, res: CustomApiResponse, middlewareOptions: MiddlewareOptions) {
 		const {middlewareCallStack, nextMiddleware} = middlewareOptions
@@ -341,6 +364,7 @@ export {
 	requireBodyParams,
 	requireQueryParams,
 	requireAuthenticatedUser,
+	requireSuperuser,
 	requirePermissionLevel,
 	requireBodyValidators,
 	requireQueryParamValidators,

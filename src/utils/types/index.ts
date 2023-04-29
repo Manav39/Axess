@@ -1,12 +1,62 @@
-export type UserPointAccessType = "CHECK_IN" | "CHECK_OUT"
-export type UserAreaAccessType = "ENTRY" | "EXIT"
+export type LoggingEventType =
+	`ORG_${
+	"CREATE"
+	}` |
+	`USER_${
+		"CREATE" | "DELETE" | "LOGIN"
+	}` |
+	`DEVICE_${
+		"CREATE" | "DELETE" | "UPDATE"
+	}` |
+	`USER_${
+		"ENTRY" | "EXIT"
+	}` |
+	`SUDO_${
+		"LOGIN" | "LOGOUT"
+	}`
 
-export type UserAccessEvent = {
-	deviceId: string,
-	eventTimestamp: number,
-	userId: string,
-	accessType: UserPointAccessType
-}
+export type LogEventArgs = ({
+	eventType: "ORG_CREATE",
+	eventData: {
+		orgId: string
+	}
+} | {
+	eventType: `USER_${
+		"CREATE" | "DELETE" | "LOGIN" | "LOGOUT"
+	}`,
+	eventData: {
+		userUUID: string,
+		userId: string,
+		permissionLevel: UserPermissionLevel
+	}
+} | {
+	eventType: `DEVICE_${
+		"CREATE" | "DELETE" | "UPDATE"
+	}`
+	eventData: {
+		deviceUUID: string,
+		deviceName: string,
+		permissionLevel: UserPermissionLevel
+	}
+} | {
+	eventType: `USER_${
+		"ENTRY" | "EXIT"
+	}`,
+	eventData: {
+		userUUID: string,
+		userId: string,
+		permissionLevel: UserPermissionLevel
+	}
+} | {
+	eventType: `SUDO_${
+		"LOGIN" | "LOGOUT"
+	}`,
+	eventData: {
+		userUUID: string,
+		userId: string,
+		permissionLevel: UserPermissionLevel
+	}
+})
 
 export enum UserPermissionLevel {
 	GUEST,
@@ -37,6 +87,7 @@ type APIResponseRequestStatus =
 	"ERR_INVALID_QUERY_PARAMS" |
 	"ERR_MISSING_QUERY_PARAMS" |
 	"ERR_AUTH_REQUIRED" |
+	"ERR_SUPERUSER_REQUIRED" |
 	"ERR_INSUFFICIENT_PERMISSION" |
 	"ERR_NOT_FOUND"
 
@@ -47,14 +98,16 @@ export interface APIResponse {
 }
 
 export interface DecodedJWTCookie {
+	userUUID: string,
 	userId: string,
-	permissionLevel: UserPermissionLevel
+	permissionLevel: UserPermissionLevel,
+	tokenType: "SUDO" | "CLIENT"
 }
 
 export type AuthData = {
-	isAuthenticated?:boolean,
+	isAuthenticated?: boolean,
 	userId?: string,
-	permissionLevel?: UserPermissionLevel	
+	permissionLevel?: UserPermissionLevel
 }
 
 export type AuthContextType = AuthData & {
