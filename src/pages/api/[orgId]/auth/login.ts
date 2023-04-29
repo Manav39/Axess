@@ -20,7 +20,7 @@ import {
 } from "@/utils/common";
 import {LoginUserResponse} from "@/utils/types/apiResponses";
 
-export default async function loginUser(req: CustomApiRequest<LoginUserRequestBody, LoginUserRequestParams>, res: CustomApiResponse<LoginUserRequestBody, LoginUserRequestParams>) {
+export default async function loginUser(req: CustomApiRequest<LoginUserRequestBody, LoginUserRequestParams>, res: CustomApiResponse) {
 	const middlewareStatus = await requireMiddlewareChecks(
 		req,
 		res,
