@@ -87,6 +87,15 @@ async function VALID_ORG_ID(orgId: string) {
 	return true
 }
 
+function GT_MIN_LT_MAX(min: number, max: number){
+	return function(value: number){
+		if (value >= min && value <= max){
+			return true
+		}
+		return false
+	}
+}
+
 export {
 	NON_ZERO,
 	NON_NEGATIVE,
@@ -105,5 +114,6 @@ export {
 	
 	IN_ARR,
 	NOT_IN_ARR,
-	VALID_ORG_ID
+	VALID_ORG_ID,
+	GT_MIN_LT_MAX as LT_MIN_GT_MAX
 }
