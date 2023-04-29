@@ -78,7 +78,7 @@ export default async function loginUser(req: CustomApiRequest<LoginUserRequestBo
 		{
 			permissionLevel: permissionLevel,
 			userId: docUserId
-		} satisfies DecodedJWTCookie,
+		} as DecodedJWTCookie,
 		process.env.JWT_SECRET!
 	)
 	

@@ -1,47 +1,104 @@
-import React, {useCallback, useState} from "react";
-import {Button, Container, Input, Row, Spacer, Text} from "@nextui-org/react";
-import {FaLock, FaUser} from "react-icons/fa";
-import {GrOrganization} from "react-icons/gr";
-import {makeAPIRequest} from "@/utils/apiHandler";
-import {LoginUserRequestBody, LoginUserRequestParams} from "@/utils/types/apiRequests";
-import {LoginUserResponse} from "@/utils/types/apiResponses";
+import React, { useCallback, useState } from "react";
+import { Button, Container, Input, Row, Spacer, Text } from "@nextui-org/react";
+import { FaLock, FaUser } from "react-icons/fa";
+import { GrOrganization } from "react-icons/gr";
+import { makeAPIRequest } from "@/utils/apiHandler";
+import { LoginUserRequestBody, LoginUserRequestParams } from "@/utils/types/apiRequests";
+import { LoginUserResponse } from "@/utils/types/apiResponses";
+import { AuthContextType } from "@/utils/types";
+import { AuthContext } from "../_app";
+import { useContext } from "react";
 
 export default function LoginPage() {
+	const AuthCtx = useContext<AuthContextType>(AuthContext);
 	const [userName, setUserName] = useState("");
 	const [password, setPassword] = useState("");
 	const [orgId, setOrgId] = useState("");
-	
+	const [invalid, setInvalid] = useState({
+		userId: false,
+		userPass: false,
+		orgId: false,
+	});
+	const [missing, setMissing] = useState({
+		userId: false,
+		userPass: false,
+		orgId: false,
+	});
 	const attemptLogin = useCallback(async () => {
-		const {
-			isSuccess,
-			isError,
-			code,
-			data,
-			error
-		} = await makeAPIRequest<LoginUserResponse, LoginUserRequestBody, LoginUserRequestParams>({
+		const { isSuccess, isError, code, data, error } = await makeAPIRequest<
+			LoginUserResponse,
+			LoginUserRequestBody,
+			LoginUserRequestParams
+		>({
 			requestMethod: "POST",
 			endpointPath: "/api/:orgId/users/login",
 			bodyParams: {
 				userId: userName,
-				userPass: password
+				userPass: password,
 			},
 			queryParams: {
-				orgId: orgId
-			}
-		})
+				orgId: orgId,
+			},
+		});
 		if (isError && error) {
-			console.error(error)
-			return
+			console.error(error);
+			return;
 		}
 		if (isSuccess && data) {
-			const {requestStatus} = data
+			const { requestStatus } = data;
 			if (requestStatus === "SUCCESS") {
-				const {userId, permissionLevel} = data
-				// AuthCtx. updateData(...)
+				const { userId, permissionLevel } = data;
+				AuthCtx.updateAuthData({
+					isAuthenticated: true,
+					userId: userName,
+					permissionLevel: permissionLevel,
+				});
+				setInvalid((invalidData) => {
+					return {
+						...invalidData,
+						orgId: false,
+						userId: false,
+						userPass: false,
+					};
+				});
+			}
+			if (requestStatus === "ERR_INVALID_QUERY_PARAMS") {
+				setInvalid((invalidData) => {
+					return {
+						...invalidData,
+						orgId: true,
+					};
+				});
+			}
+			if (requestStatus === "ERR_INVALID_BODY_PARAMS") {
+				setInvalid((invalidData) => {
+					return {
+						...invalidData,
+						userId: true,
+						userPass: true,
+					};
+				});
+			}
+			if (requestStatus === "ERR_MISSING_BODY_PARAMS") {
+				setMissing((missingParams) => {
+					return {
+						...missingParams,
+						userId: true,
+						userPass: true,
+					};
+				});
+			}
+			if (requestStatus === "ERR_MISSING_QUERY_PARAMS") {
+				setMissing((missingParams) => {
+					return {
+						...missingParams,
+						orgId: true,
+					};
+				});
 			}
 		}
-	}, [userName, password, orgId])
-	
+	}, [userName, orgId, password]);
+
 	return (
 		<>
 			<Container
@@ -55,12 +112,12 @@ export default function LoginPage() {
 					padding: "2rem",
 				}}
 			>
-				<Text h2 style={{marginBottom: "2.5rem", color: "blue"}}>
+				<Text h2 style={{ marginBottom: "2.5rem", color: "blue" }}>
 					Login
 				</Text>
 				<Row justify="center">
-					<GrOrganization size={42}/>
-					<Spacer x={1}/>
+					<GrOrganization size={42} />
+					<Spacer x={1} />
 					<Input
 						placeholder="Enter Organization ID"
 						width="30rem"
@@ -68,10 +125,10 @@ export default function LoginPage() {
 						onChange={(e) => setOrgId(e.target.value)}
 					/>
 				</Row>
-				<Spacer x={2}/>
+				<Spacer x={2} />
 				<Row justify="center">
-					<FaUser size={40}/>
-					<Spacer x={1}/>
+					<FaUser size={40} />
+					<Spacer x={1} />
 					<Input
 						placeholder="Enter Username"
 						width="30rem"
@@ -79,10 +136,10 @@ export default function LoginPage() {
 						onChange={(e) => setUserName(e.target.value)}
 					/>
 				</Row>
-				<Spacer y={1}/>
+				<Spacer y={1} />
 				<Row justify="center">
-					<FaLock size={40}/>
-					<Spacer x={1}/>
+					<FaLock size={40} />
+					<Spacer x={1} />
 					<Input
 						placeholder="Enter Password"
 						width="30rem"
@@ -90,11 +147,13 @@ export default function LoginPage() {
 						onChange={(e) => setPassword(e.target.value)}
 					/>
 				</Row>
-				<Spacer y={2}/>
+				<Spacer y={2} />
 				<Row justify="center">
-					<Button style={{width: "35rem"}}>Login</Button>
+					<Button style={{ width: "35rem" }} onClick={attemptLogin}>
+						Login
+					</Button>
 				</Row>
 			</Container>
 		</>
 	);
-};
+}

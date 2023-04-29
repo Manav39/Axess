@@ -50,3 +50,13 @@ export interface DecodedJWTCookie {
 	userId: string,
 	permissionLevel: UserPermissionLevel
 }
+
+export type AuthData = {
+	isAuthenticated?:boolean,
+	userId?: string,
+	permissionLevel?: UserPermissionLevel	
+}
+
+export type AuthContextType = AuthData & {
+	updateAuthData: (newAuthData: AuthData) => void
+}
