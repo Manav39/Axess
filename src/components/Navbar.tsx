@@ -1,4 +1,6 @@
-import { Navbar, Button, Link, Text, Spacer } from "@nextui-org/react";
+import {Navbar, Spacer, Text} from "@nextui-org/react";
+import {default as NextLink} from "next/link";
+
 export default function App() {
 	return (
 		<div>
@@ -7,17 +9,20 @@ export default function App() {
 					<Text b color="inherit" hideIn="xs">
 						AXESS
 					</Text>
-					<Spacer x={2} />
+					<Spacer x={2}/>
 					<Navbar.Content hideIn="xs" variant="underline">
-						<Navbar.Link href="/features">Features</Navbar.Link>
-						<Navbar.Link href="/pricing">Pricing</Navbar.Link>
+						<NextLink href="/features">
+							Features
+						</NextLink>
+						<NextLink href="/pricing">
+							Pricing
+						</NextLink>
 					</Navbar.Content>
 				</Navbar.Brand>
-
 				<Navbar.Content>
-					<Navbar.Link color="inherit" href="/auth/login">
+					<NextLink href={"/auth/login"}>
 						Login
-					</Navbar.Link>
+					</NextLink>
 				</Navbar.Content>
 			</Navbar>
 		</div>

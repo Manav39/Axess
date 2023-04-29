@@ -1,13 +1,12 @@
-import React, { useCallback, useState } from "react";
-import { Button, Container, Input, Row, Spacer, Text } from "@nextui-org/react";
-import { FaLock, FaUser } from "react-icons/fa";
-import { GrOrganization } from "react-icons/gr";
-import { makeAPIRequest } from "@/utils/apiHandler";
-import { LoginUserRequestBody, LoginUserRequestParams } from "@/utils/types/apiRequests";
-import { LoginUserResponse } from "@/utils/types/apiResponses";
-import { AuthContextType } from "@/utils/types";
-import { AuthContext } from "../_app";
-import { useContext } from "react";
+import React, {useCallback, useContext, useState} from "react";
+import {Button, Container, Input, Row, Spacer, Text} from "@nextui-org/react";
+import {FaLock, FaUser} from "react-icons/fa";
+import {GrOrganization} from "react-icons/gr";
+import {makeAPIRequest} from "@/utils/apiHandler";
+import {LoginUserRequestBody, LoginUserRequestParams} from "@/utils/types/apiRequests";
+import {LoginUserResponse} from "@/utils/types/apiResponses";
+import {AuthContextType} from "@/utils/types";
+import {AuthContext} from "../_app";
 
 export default function LoginPage() {
 	const AuthCtx = useContext<AuthContextType>(AuthContext);
@@ -25,13 +24,13 @@ export default function LoginPage() {
 		orgId: false,
 	});
 	const attemptLogin = useCallback(async () => {
-		const { isSuccess, isError, code, data, error } = await makeAPIRequest<
+		const {isSuccess, isError, code, data, error} = await makeAPIRequest<
 			LoginUserResponse,
 			LoginUserRequestBody,
 			LoginUserRequestParams
 		>({
 			requestMethod: "POST",
-			endpointPath: "/api/:orgId/users/login",
+			endpointPath: "/api/:orgId/auth/login",
 			bodyParams: {
 				userId: userName,
 				userPass: password,
@@ -45,9 +44,9 @@ export default function LoginPage() {
 			return;
 		}
 		if (isSuccess && data) {
-			const { requestStatus } = data;
+			const {requestStatus} = data;
 			if (requestStatus === "SUCCESS") {
-				const { userId, permissionLevel } = data;
+				const {userId, permissionLevel} = data;
 				AuthCtx.updateAuthData({
 					isAuthenticated: true,
 					userId: userName,
@@ -98,7 +97,7 @@ export default function LoginPage() {
 			}
 		}
 	}, [userName, orgId, password]);
-
+	
 	return (
 		<>
 			<Container
@@ -112,12 +111,12 @@ export default function LoginPage() {
 					padding: "2rem",
 				}}
 			>
-				<Text h2 style={{ marginBottom: "2.5rem", color: "blue" }}>
+				<Text h2 style={{marginBottom: "2.5rem", color: "blue"}}>
 					Login
 				</Text>
 				<Row justify="center">
-					<GrOrganization size={42} />
-					<Spacer x={1} />
+					<GrOrganization size={42}/>
+					<Spacer x={1}/>
 					<Input
 						placeholder="Enter Organization ID"
 						width="30rem"
@@ -125,10 +124,10 @@ export default function LoginPage() {
 						onChange={(e) => setOrgId(e.target.value)}
 					/>
 				</Row>
-				<Spacer x={2} />
+				<Spacer x={2}/>
 				<Row justify="center">
-					<FaUser size={40} />
-					<Spacer x={1} />
+					<FaUser size={40}/>
+					<Spacer x={1}/>
 					<Input
 						placeholder="Enter Username"
 						width="30rem"
@@ -136,10 +135,10 @@ export default function LoginPage() {
 						onChange={(e) => setUserName(e.target.value)}
 					/>
 				</Row>
-				<Spacer y={1} />
+				<Spacer y={1}/>
 				<Row justify="center">
-					<FaLock size={40} />
-					<Spacer x={1} />
+					<FaLock size={40}/>
+					<Spacer x={1}/>
 					<Input
 						placeholder="Enter Password"
 						width="30rem"
@@ -147,9 +146,9 @@ export default function LoginPage() {
 						onChange={(e) => setPassword(e.target.value)}
 					/>
 				</Row>
-				<Spacer y={2} />
+				<Spacer y={2}/>
 				<Row justify="center">
-					<Button style={{ width: "35rem" }} onClick={attemptLogin}>
+					<Button style={{width: "35rem"}} onClick={attemptLogin}>
 						Login
 					</Button>
 				</Row>
