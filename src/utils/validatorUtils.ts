@@ -1,3 +1,6 @@
+import {db} from "@/utils/db";
+import {ORGS_DOC_COLLECTION_NAME} from "@/utils/common";
+
 function NON_ZERO(value: number) {
 	return value != 0
 }
@@ -74,6 +77,16 @@ function NOT_IN_ARR<T>(elemArray: T[]) {
 	}
 }
 
+async function VALID_ORG_ID(orgId: string) {
+	const orgCollection = db.collection(ORGS_DOC_COLLECTION_NAME)
+	const orgDocRef = orgCollection.doc(orgId)
+	const orgDocData = await orgDocRef.get()
+	if (orgDocData.exists === false) {
+		return false
+	}
+	return true
+}
+
 export {
 	NON_ZERO,
 	NON_NEGATIVE,
@@ -92,4 +105,5 @@ export {
 	
 	IN_ARR,
 	NOT_IN_ARR,
+	VALID_ORG_ID
 }

@@ -84,17 +84,17 @@ function requireValidBody(): MiddlewareFn {
 }
 
 
-function requireBodyParams<T>(...bodyParams: (keyof T)[]): MiddlewareFn<T> {
-	return async function (req: CustomApiRequest<T>, res: CustomApiResponse, middlewareOptions: MiddlewareOptions): Promise<void> {
+function requireBodyParams<BodyT, QueryT>(...bodyParams: (keyof BodyT)[]): MiddlewareFn<BodyT, QueryT> {
+	return async function (req: CustomApiRequest<BodyT, QueryT>, res: CustomApiResponse, middlewareOptions: MiddlewareOptions): Promise<void> {
 		const {middlewareCallStack, nextMiddleware} = middlewareOptions
 		if (!middlewareCallStack.includes(requireValidBody.name)) {
 			throw new Error(
 				"requireBodyParams was called without verifying a valid body"
 			)
 		}
-		const requestBodyKeys = Object.keys(req.body) as (keyof T)[]
-		const missingBodyParams: (keyof T)[] = bodyParams.filter((bodyParam) => {
-			if (requestBodyKeys.includes(bodyParam as keyof T) && req.body[bodyParam] !== undefined) {
+		const requestBodyKeys = Object.keys(req.body) as (keyof BodyT)[]
+		const missingBodyParams: (keyof BodyT)[] = bodyParams.filter((bodyParam) => {
+			if (requestBodyKeys.includes(bodyParam as keyof BodyT) && req.body[bodyParam] !== undefined) {
 				return false
 			}
 			return true
@@ -204,8 +204,8 @@ function requireBodyValidators<T, P>(validatorsToRun: ValidatorMapType<T>, skipB
 				"requireBodyValidators was called without verifying all properties in body (requireBodyParams)"
 			)
 		}
-		const validParams: string[] = []
-		const invalidParams: string[] = []
+		const validParams: (keyof T)[] = []
+		const invalidParams: (keyof T)[] = []
 		// Only run validators on passed values
 		for (const paramKey in validatorsToRun) {
 			const paramValue = req.body[paramKey]
@@ -220,7 +220,7 @@ function requireBodyValidators<T, P>(validatorsToRun: ValidatorMapType<T>, skipB
 		if (invalidParams.length > 0) {
 			res.status(400).json({
 				requestStatus: "ERR_INVALID_BODY_PARAMS",
-				invalidParams: invalidParams
+				invalidParams: invalidParams as string[]
 			})
 			nextMiddleware(false)
 			return
@@ -238,8 +238,8 @@ function requireQueryParamValidators<T, P>(validatorsToRun: ValidatorMapType<P>,
 				"requireQueryParamValidators was called without verifying all properties in body (requireQueryParams)"
 			)
 		}
-		const validParams: string[] = []
-		const invalidParams: string[] = []
+		const validParams: (keyof P)[] = []
+		const invalidParams: (keyof P)[] = []
 		// Only run validators on passed values
 		for (const paramKey in validatorsToRun) {
 			const paramValue = req.query[paramKey]
@@ -254,7 +254,7 @@ function requireQueryParamValidators<T, P>(validatorsToRun: ValidatorMapType<P>,
 		if (invalidParams.length > 0) {
 			res.status(400).json({
 				requestStatus: "ERR_INVALID_QUERY_PARAMS",
-				invalidParams: invalidParams
+				invalidParams: invalidParams as string[]
 			})
 			nextMiddleware(false)
 			return
