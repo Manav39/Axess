@@ -1,5 +1,5 @@
 import {db} from "@/utils/db";
-import {ORGS_DOC_COLLECTION_NAME} from "@/utils/common";
+import {ORGS_DEVICE_COLLECTION_NAME, ORGS_DOC_COLLECTION_NAME} from "@/utils/common";
 
 function NON_ZERO(value: number) {
 	return value != 0
@@ -87,9 +87,23 @@ async function VALID_ORG_ID(orgId: string) {
 	return true
 }
 
-function GT_MIN_LT_MAX(min: number, max: number){
-	return function(value: number){
-		if (value >= min && value <= max){
+function VALID_DEVICE_ID(orgId: string) {
+	return async function (deviceId: string) {
+		const orgCollection = db.collection(ORGS_DOC_COLLECTION_NAME)
+		const orgDocRef = orgCollection.doc(orgId)
+		const orgDeviceCollection = orgDocRef.collection(ORGS_DEVICE_COLLECTION_NAME)
+		const orgDeviceDocRef = orgDeviceCollection.doc(deviceId)
+		const orgDocData = await orgDeviceDocRef.get()
+		if (orgDocData.exists === false) {
+			return false
+		}
+		return true
+	}
+}
+
+function GT_MIN_LT_MAX(min: number, max: number) {
+	return function (value: number) {
+		if (value >= min && value <= max) {
 			return true
 		}
 		return false
@@ -115,5 +129,6 @@ export {
 	IN_ARR,
 	NOT_IN_ARR,
 	VALID_ORG_ID,
-	GT_MIN_LT_MAX as LT_MIN_GT_MAX
+	VALID_DEVICE_ID,
+	GT_MIN_LT_MAX,
 }

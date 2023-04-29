@@ -19,6 +19,8 @@ import {
 	USER_PASS_PROPERTY_NAME
 } from "@/utils/common";
 import {LoginUserResponse} from "@/utils/types/apiResponses";
+import {sign} from "jsonwebtoken";
+import {DecodedJWTCookie} from "@/utils/types";
 
 export default async function loginUser(req: CustomApiRequest<LoginUserRequestBody, LoginUserRequestParams>, res: CustomApiResponse) {
 	const middlewareStatus = await requireMiddlewareChecks(
@@ -71,7 +73,19 @@ export default async function loginUser(req: CustomApiRequest<LoginUserRequestBo
 	const docId = selectedDoc.id;
 	const docData = selectedDoc.data()
 	const {permissionLevel, userId: docUserId} = docData
-	res.status(200).json<LoginUserResponse>({
+	
+	const signedCookie = sign(
+		{
+			permissionLevel: permissionLevel,
+			userId: docUserId
+		} satisfies DecodedJWTCookie,
+		process.env.JWT_SECRET!
+	)
+	
+	res.setHeader(
+		"Set-Cookie",
+		`axess-auth-token=${signedCookie}; HttpOnly; Path=/`
+	).status(200).json<LoginUserResponse>({
 		requestStatus: "SUCCESS",
 		userId: docUserId,
 		permissionLevel: permissionLevel

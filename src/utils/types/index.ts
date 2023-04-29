@@ -1,18 +1,11 @@
 export type UserPointAccessType = "CHECK_IN" | "CHECK_OUT"
 export type UserAreaAccessType = "ENTRY" | "EXIT"
 
-export type UserPointAccessEvent = {
+export type UserAccessEvent = {
 	deviceId: string,
 	eventTimestamp: number,
 	userId: string,
 	accessType: UserPointAccessType
-}
-
-export type UserAreaAccessEvent = {
-	deviceId: string,
-	eventTimestamp: number,
-	userId: string,
-	accessType: UserAreaAccessType
 }
 
 export enum UserPermissionLevel {
@@ -22,6 +15,11 @@ export enum UserPermissionLevel {
 	MAINTENANCE,
 	ADMINISTRATOR,
 	SUPERUSER
+}
+
+export type DeviceInfo = {
+	deviceName: string,
+	permissionLevel: UserPermissionLevel
 }
 
 export type APIResponseCode =

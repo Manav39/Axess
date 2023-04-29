@@ -5,7 +5,6 @@ export interface LoginUserResponse extends APIResponse {
 	permissionLevel: UserPermissionLevel
 }
 
-export interface LoginDeviceResponse extends APIResponse {
-	deviceName: string,
-	permissionLevel: UserPermissionLevel
+export interface CreateDeviceResponse extends APIResponse {
+	deviceId: string
 }

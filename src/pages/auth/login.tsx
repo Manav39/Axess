@@ -40,7 +40,7 @@ export default function LoginPage() {
 				// AuthCtx. updateData(...)
 			}
 		}
-	}, [])
+	}, [userName, password, orgId])
 	
 	return (
 		<>
