@@ -139,7 +139,7 @@ function requireQueryParams<T, P>(...queryParams: (keyof P)[]): MiddlewareFn<T, 
 
 function requireAuthenticatedUser(): MiddlewareFn {
 	return async function (req: CustomApiRequest, res: CustomApiResponse, middlewareOptions: MiddlewareOptions): Promise<void> {
-		const authCookie = req.cookies["versura-auth-token"];
+		const authCookie = req.cookies["axess-auth-token"];
 		const {nextMiddleware} = middlewareOptions
 		if (authCookie == null || authCookie == '') {
 			res.status(403).json({
@@ -154,9 +154,6 @@ function requireAuthenticatedUser(): MiddlewareFn {
 				authCookie,
 				process.env.JWT_SECRET!
 			) as DecodedJWTCookie
-			
-			// Having 1 row means that the current user exists in our database
-			// We can go ahead and assume that the user is authenticated
 			
 			req.user = decodedCookie
 			
@@ -173,7 +170,7 @@ function requireAuthenticatedUser(): MiddlewareFn {
 	}
 }
 
-function requireSuperUser(): MiddlewareFn {
+function requirePermissionLevel(requiredLevel: UserPermissionLevel, exactLevel = false): MiddlewareFn {
 	return async function (req, res, opts) {
 		const {middlewareCallStack, nextMiddleware} = opts
 		if (!middlewareCallStack.includes(requireAuthenticatedUser.name)) {
@@ -184,9 +181,18 @@ function requireSuperUser(): MiddlewareFn {
 		
 		const currentUser = req.user!
 		const {permissionLevel} = currentUser
-		if (permissionLevel == UserPermissionLevel.SUPERUSER) {
-			nextMiddleware(true)
+		if (exactLevel) {
+			if (permissionLevel === requiredLevel) {
+				nextMiddleware(true)
+				return
+			}
+			nextMiddleware(false)
 			return
+		} else {
+			if (permissionLevel >= requiredLevel) {
+				nextMiddleware(true)
+				return
+			}
 		}
 		
 		res.status(403).json({
@@ -335,7 +341,7 @@ export {
 	requireBodyParams,
 	requireQueryParams,
 	requireAuthenticatedUser,
-	requireSuperUser,
+	requirePermissionLevel,
 	requireBodyValidators,
 	requireQueryParamValidators,
 	
