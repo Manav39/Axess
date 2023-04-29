@@ -30,7 +30,7 @@ export default function LoginPage() {
 			LoginUserRequestParams
 		>({
 			requestMethod: "POST",
-			endpointPath: "/api/:orgId/auth/login",
+			endpointPath: "/api/orgs/:orgId/auth/login",
 			bodyParams: {
 				userId: userName,
 				userPass: password,
