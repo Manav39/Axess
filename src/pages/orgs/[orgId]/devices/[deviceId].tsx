@@ -3,6 +3,7 @@ import {GetServerSideProps} from "next";
 import {useEffect} from "react";
 
 export type DeviceQRPageProps = {
+	orgId: string,
 	deviceData: {
 		deviceUUID: string,
 		deviceName: string,
@@ -20,6 +21,7 @@ export const getServerSideProps: GetServerSideProps<DeviceQRPageProps, DeviceQRC
 	
 	return {
 		props: {
+			orgId: orgId,
 			deviceData: {
 				deviceUUID: deviceId,
 				deviceName: "Some Device",
@@ -31,6 +33,7 @@ export const getServerSideProps: GetServerSideProps<DeviceQRPageProps, DeviceQRC
 
 export default function DeviceQRPage(props: DeviceQRPageProps & NavbarControl) {
 	const {
+		orgId,
 		deviceData: {
 			deviceUUID, deviceName, permissionLevel
 		}
