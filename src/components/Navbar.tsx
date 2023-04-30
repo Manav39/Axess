@@ -38,6 +38,20 @@ export default function App() {
 					>
 						Login
 					</NextLink>
+					<NextLink
+						href={"/mobile/login"}
+						style={{
+							fontSize: "20px",
+							padding: "10px 20px",
+							backgroundColor: "#6C9BCF",
+							color: "white",
+							borderRadius: "20px",
+							borderTop: "none",
+							borderBottom: "none",
+						}}
+					>
+						Mobile Login
+					</NextLink>
 				</Navbar.Content>
 			</Navbar>
 		</div>

@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useState } from "react";
+import React, { useCallback, useContext, useState, useEffect } from "react";
 import { Button, Container, Input, Row, Spacer, Text } from "@nextui-org/react";
 import { FaLock, FaUser } from "react-icons/fa";
 import { GrOrganization } from "react-icons/gr";
@@ -8,7 +8,14 @@ import { LoginUserResponse } from "@/utils/types/apiResponses";
 import { AuthContextType } from "@/utils/types";
 import { AuthContext } from "../_app";
 import { useRouter } from "next/router";
-export default function LoginPage() {
+export default function LoginMobile(props: any) {
+	useEffect(() => {
+		props.setShowNavbar(false);
+
+		return () => {
+			props.setShowNavbar(true);
+		};
+	}, []);
 	const router = useRouter();
 	const AuthCtx = useContext<AuthContextType>(AuthContext);
 	const [userName, setUserName] = useState("");
@@ -50,10 +57,8 @@ export default function LoginPage() {
 				const { userId, permissionLevel } = data;
 				AuthCtx.updateAuthData({
 					isAuthenticated: true,
-					userId: userId,
+					userId: userName,
 					permissionLevel: permissionLevel,
-					orgId: orgId,
-					tokenType: "CLIENT"
 				});
 				setInvalid((invalidData) => {
 					return {
@@ -111,7 +116,7 @@ export default function LoginPage() {
 					marginTop: "11rem",
 					boxShadow: "0 0 10px rgba(0, 0, 0, 0.5);",
 					borderRadius: "1rem",
-					width: "25rem",
+					maxWidth: "15rem",
 					padding: "2rem",
 				}}
 			>
@@ -144,8 +149,8 @@ export default function LoginPage() {
 					<FaLock size={40} />
 					<Spacer x={1} />
 					<Input
-						placeholder="Enter Password"
 						type="password"
+						placeholder="Enter Password"
 						width="30rem"
 						value={password}
 						onChange={(e) => setPassword(e.target.value)}

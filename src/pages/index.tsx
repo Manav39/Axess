@@ -1,5 +1,7 @@
 import React from "react";
+import { default as NextLink } from "next/link";
 import { Container, Row, Col, Image, Text } from "@nextui-org/react";
+
 const Home = () => {
 	return (
 		<>
@@ -16,13 +18,12 @@ const Home = () => {
 						/>
 					</Col>
 					<Col css={{ marginTop: "100px", width: "3 rem" }}>
-						<Text h3>
+						<Text h3 style={{ marginBottom: "2rem" }}>
 							Randomly generated QR codes can improve security by making it more difficult for
 							unauthorized individuals to gain access to a resource. Because the QR codes are randomly
 							generated, they cannot be easily replicated, and thus the risk of someone guessing or
 							copying the code is reduced.QR codes are easy to scan and can be read quickly by most
-							smartphones, making it easy for users to gain access to a resource without having to
-							remember complicated passwords or carry access cards or tokens.
+							smartphones.
 						</Text>
 					</Col>
 				</Row>
