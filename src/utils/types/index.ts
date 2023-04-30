@@ -132,3 +132,7 @@ export type BulkUserData = {
 	permissionLevel: UserPermissionLevel,
 	userPassword: string
 }
+
+export type NavbarControl = {
+	setShowNavbar: (show: boolean) => void
+}
