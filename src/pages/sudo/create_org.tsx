@@ -1,13 +1,13 @@
-import React, { useCallback, useContext, useState } from "react";
-import { Button, Container, Input, Row, Spacer, Text } from "@nextui-org/react";
-import { FaLock, FaUser } from "react-icons/fa";
-import { GrOrganization } from "react-icons/gr";
-import { makeAPIRequest } from "@/utils/apiHandler";
-import { LoginUserRequestBody, LoginUserRequestParams } from "@/utils/types/apiRequests";
-import { LoginUserResponse } from "@/utils/types/apiResponses";
-import { AuthContextType } from "@/utils/types";
-import { AuthContext } from "../_app";
-import { useRouter } from "next/router";
+import React, {useCallback, useContext, useState} from "react";
+import {Button, Container, Input, Row, Spacer, Text} from "@nextui-org/react";
+import {FaLock, FaUser} from "react-icons/fa";
+import {GrOrganization} from "react-icons/gr";
+import {makeAPIRequest} from "@/utils/apiHandler";
+import {CreateOrgBody} from "@/utils/types/apiRequests";
+import {APIResponse, AuthContextType} from "@/utils/types";
+import {AuthContext} from "../_app";
+import {useRouter} from "next/router";
+
 export default function CreateOrgPage() {
 	const router = useRouter();
 	const AuthCtx = useContext<AuthContextType>(AuthContext);
@@ -25,19 +25,19 @@ export default function CreateOrgPage() {
 		orgId: false,
 	});
 	const attemptLogin = useCallback(async () => {
-		const { isSuccess, isError, code, data, error } = await makeAPIRequest<
-			LoginUserResponse,
-			LoginUserRequestBody,
-			LoginUserRequestParams
+		const {isSuccess, isError, code, data, error} = await makeAPIRequest<
+			APIResponse,
+			CreateOrgBody,
+			{}
 		>({
 			requestMethod: "POST",
-			endpointPath: "/api/orgs/:orgId/auth/login",
+			endpointPath: "/api/orgs",
 			bodyParams: {
-				userId: userName,
-				userPass: password,
-			},
-			queryParams: {
-				orgId: orgId,
+				orgName: orgId,
+				adminCredentials: {
+					userId: userName,
+					userPass: password
+				}
 			},
 		});
 		if (isError && error) {
@@ -45,16 +45,8 @@ export default function CreateOrgPage() {
 			return;
 		}
 		if (isSuccess && data) {
-			const { requestStatus } = data;
+			const {requestStatus} = data;
 			if (requestStatus === "SUCCESS") {
-				const { userId, permissionLevel } = data;
-				AuthCtx.updateAuthData({
-					isAuthenticated: true,
-					userId: userId,
-					permissionLevel: permissionLevel,
-					orgId: orgId,
-					tokenType: "CLIENT",
-				});
 				setInvalid((invalidData) => {
 					return {
 						...invalidData,
@@ -101,7 +93,7 @@ export default function CreateOrgPage() {
 			}
 		}
 	}, [userName, orgId, password]);
-
+	
 	return (
 		<>
 			<Container
@@ -115,12 +107,12 @@ export default function CreateOrgPage() {
 					padding: "2rem",
 				}}
 			>
-				<Text h2 style={{ marginBottom: "2.5rem", color: "blue" }}>
+				<Text h2 style={{marginBottom: "2.5rem", color: "blue"}}>
 					Create Org
 				</Text>
 				<Row justify="center">
-					<GrOrganization size={42} />
-					<Spacer x={1} />
+					<GrOrganization size={42}/>
+					<Spacer x={1}/>
 					<Input
 						placeholder="Enter Organization ID"
 						width="30rem"
@@ -128,10 +120,10 @@ export default function CreateOrgPage() {
 						onChange={(e) => setOrgId(e.target.value)}
 					/>
 				</Row>
-				<Spacer x={2} />
+				<Spacer x={2}/>
 				<Row justify="center">
-					<FaUser size={40} />
-					<Spacer x={1} />
+					<FaUser size={40}/>
+					<Spacer x={1}/>
 					<Input
 						placeholder="Enter Username"
 						width="30rem"
@@ -139,10 +131,10 @@ export default function CreateOrgPage() {
 						onChange={(e) => setUserName(e.target.value)}
 					/>
 				</Row>
-				<Spacer y={1} />
+				<Spacer y={1}/>
 				<Row justify="center">
-					<FaLock size={40} />
-					<Spacer x={1} />
+					<FaLock size={40}/>
+					<Spacer x={1}/>
 					<Input
 						placeholder="Enter Password"
 						type="password"
@@ -151,9 +143,9 @@ export default function CreateOrgPage() {
 						onChange={(e) => setPassword(e.target.value)}
 					/>
 				</Row>
-				<Spacer y={2} />
+				<Spacer y={2}/>
 				<Row justify="center">
-					<Button style={{ width: "35rem" }} onClick={attemptLogin}>
+					<Button style={{width: "35rem"}} onClick={attemptLogin}>
 						Create
 					</Button>
 				</Row>
