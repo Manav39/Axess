@@ -78,6 +78,16 @@ export default function App() {
 							) : (
 								null
 							)}
+							{(AuthCtx.permissionLevel === UserPermissionLevel.SUPERUSER) ? (
+								<NextLink
+									href={`/sudo/create_org`}
+									style={{color: "#212A3E", fontSize: "20px", fontWeight: "bold"}}
+								>
+									Create Org
+								</NextLink>
+							) : (
+								null
+							)}
 							<Button
 								onClick={attemptLogout}
 								style={{

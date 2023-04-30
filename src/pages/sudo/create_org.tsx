@@ -100,7 +100,7 @@ export default function CreateOrgPage() {
 				display="flex"
 				justify="center"
 				css={{
-					marginTop: "11rem",
+					marginTop: "10vh",
 					boxShadow: "0 0 10px rgba(0, 0, 0, 0.5);",
 					borderRadius: "1rem",
 					width: "25rem",
