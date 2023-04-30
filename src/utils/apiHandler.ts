@@ -59,6 +59,14 @@ async function makeAPIRequest<ResponseT extends APIResponse, RequestBodyT = {}, 
 		let resolvedUrl: string = `${endpointPath}${resolvedQueryString}`
 		
 		if (ssrContext) {
+			const cookies = ssrContext.req.cookies
+			const axessToken = cookies["axess-auth-token"]
+			
+			if (axessToken) {
+				// @ts-ignore
+				requestOptions.headers["Cookie"] = `axess-auth-token=${axessToken}`
+			}
+			
 			const {
 				req: {
 					headers: {

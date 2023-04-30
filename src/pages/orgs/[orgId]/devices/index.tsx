@@ -5,7 +5,7 @@ import {GetDevicesResponse} from "@/utils/types/apiResponses";
 import {makeAPIRequest} from "@/utils/apiHandler";
 
 export type DeviceList = {
-	deviceList: GetDevicesResponse
+	deviceList: GetDevicesResponse["orgDevices"]
 }
 
 export const getServerSideProps: GetServerSideProps<DeviceList, OrgIdCommonParam> = async (ctx) => {
@@ -31,9 +31,25 @@ export const getServerSideProps: GetServerSideProps<DeviceList, OrgIdCommonParam
 				props: {deviceList: orgDevices}
 			}
 		}
+		if (requestStatus === "ERR_AUTH_REQUIRED") {
+			return {
+				redirect: {
+					destination: "/",
+					permanent: false
+				}
+			}
+		}
+		return {
+			notFound: true
+		}
+	}
+	return {
+		notFound: true
 	}
 }
 
 export default function DeviceList(props: DeviceList & NavbarControl) {
-
+	return (
+		<></>
+	)
 }
