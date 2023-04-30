@@ -1,14 +1,17 @@
 import React from "react";
-import { Card, Grid, Text, Button, Row, Container, Col } from "@nextui-org/react";
+import { Card, Grid, Text, Button, Row, Container, Col, Spacer } from "@nextui-org/react";
 import { AiOutlineUser } from "react-icons/ai";
 import { FiUsers } from "react-icons/fi";
+import { GrGroup } from "react-icons/gr";
 import { FcBusinessman } from "react-icons/fc";
-import { FcManager } from "react-icons/fc";
-import { TiTick } from "react-icons/ti";
+import { BsBuilding } from "react-icons/bs";
+
 import { BsCurrencyRupee } from "react-icons/bs";
 const Pricing = () => {
 	return (
 		<Container display="flex" justify="center" style={{ marginTop: "50px" }}>
+			<Text h2 >Pricing</Text>
+					<Spacer y={1}/>
 			<Row gap={4}>
 				<Col>
 					<Card css={{ mw: "330px" }}>
@@ -21,15 +24,14 @@ const Pricing = () => {
 						<Card.Body css={{ py: "$10" }}>
 							<AiOutlineUser size={80} style={{ marginRight: "auto", marginLeft: "auto" }} />
 							<ul style={{ listStyleType: "square" }}>
-								<li>Some quick example text </li>
-								<li>Some quick example text </li>
-								<li>Some quick example text </li>
-								<li>Some quick example text </li>
-								<li>Some quick example text </li>
+								<li>QR Based Authorization </li>
+								<li>Limited Services </li>
+								<li>Limited Resources </li>
+								<li>Online Support </li>
+								<li>Valid for 1 month </li>
 							</ul>
 							<Text h2 style={{ textAlign: "center", marginRight: "1.5rem" }}>
-								<BsCurrencyRupee size={30} />
-								999
+								FREE
 							</Text>
 						</Card.Body>
 						<Card.Footer>
@@ -52,15 +54,15 @@ const Pricing = () => {
 						<Card.Body css={{ py: "$10" }}>
 							<FiUsers size={80} style={{ marginRight: "auto", marginLeft: "auto" }} />
 							<ul style={{ listStyleType: "square" }}>
-								<li>Some quick example text </li>
-								<li>Some quick example text </li>
-								<li>Some quick example text </li>
-								<li>Some quick example text </li>
-								<li>Some quick example text </li>
+								<li>QR Based Authorization</li>
+								<li>Admin Controlled System </li>
+								<li>Upto 30 Members</li>
+								<li>24/7 Online Support</li>
+								<li>Resources Provided</li>
 							</ul>
 							<Text h2 style={{ textAlign: "center", marginRight: "1.5rem" }}>
 								<BsCurrencyRupee size={30} />
-								9999
+								999  <Text h6>per month</Text>
 							</Text>
 						</Card.Body>
 
@@ -81,17 +83,17 @@ const Pricing = () => {
 							</Text>
 						</Card.Header>
 						<Card.Body css={{ py: "$10" }}>
-							<FcBusinessman size={80} style={{ marginRight: "auto", marginLeft: "auto" }} />
+							<GrGroup size={80} style={{ marginRight: "auto", marginLeft: "auto" }} />
 							<ul style={{ listStyleType: "square" }}>
-								<li>Some quick example text </li>
-								<li>Some quick example text </li>
-								<li>Some quick example text </li>
-								<li>Some quick example text </li>
-								<li>Some quick example text </li>
+								<li>QR Based Authorization</li>
+								<li>Admin Controlled System </li>
+								<li>Upto 100 Members</li>
+								<li>24/7 Online Support</li>
+								<li>Resources Provided</li>
 							</ul>
 							<Text h2 style={{ textAlign: "center", marginRight: "1.5rem" }}>
 								<BsCurrencyRupee size={30} />
-								16999
+								9999 <Text h6>per month</Text>
 							</Text>
 						</Card.Body>
 						<Card.Footer>
@@ -111,17 +113,17 @@ const Pricing = () => {
 							</Text>
 						</Card.Header>
 						<Card.Body css={{ py: "$10" }}>
-							<FcManager size={80} style={{ marginRight: "auto", marginLeft: "auto" }} />
+							<BsBuilding size={80} style={{ marginRight: "auto", marginLeft: "auto" }} />
 							<ul style={{ listStyleType: "square" }}>
-								<li>Some quick example text </li>
-								<li>Some quick example text </li>
-								<li>Some quick example text </li>
-								<li>Some quick example text </li>
-								<li>Some quick example text </li>
+								<li>QR Based Authorization</li>
+								<li>Admin Controlled System </li>
+								<li>More than 100 Members</li>
+								<li>24/7 Online Support</li>
+								<li>Resources Provided</li>
 							</ul>
 							<Text h2 style={{ textAlign: "center", marginRight: "1.5rem" }}>
 								<BsCurrencyRupee size={30} />
-								24999
+								14999 <Text h6>per month</Text>
 							</Text>
 						</Card.Body>
 						<Card.Footer>

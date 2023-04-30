@@ -5,20 +5,25 @@ import { Container, Row, Col, Image, Text } from "@nextui-org/react";
 const Home = () => {
 	return (
 		<>
-			<Container>
+		
+			<Container style={{display:"flex",textAlign:"center"}}>
+			
 				<Row gap={1} css={{ paddingTop: "100px", height: "70vh" }}>
+				
 					<Col>
+					
 						<Image
 							width={450}
 							height={350}
-							src="https://img.freepik.com/free-vector/shield_78370-582.jpg?w=2000"
+							src="/images/index1.avif"
 							alt="Default Image"
 							objectFit="cover"
 							css={{ borderRadius: "2rem" }}
 						/>
 					</Col>
-					<Col css={{ marginTop: "100px", width: "3 rem" }}>
-						<Text h3 style={{ marginBottom: "2rem" }}>
+					<Col css={{ marginTop: "25px", width: "3 rem" }}>
+					<center><Text h1>QR-Based Authorization System</Text></center>
+						<Text h3>
 							Randomly generated QR codes can improve security by making it more difficult for
 							unauthorized individuals to gain access to a resource. Because the QR codes are randomly
 							generated, they cannot be easily replicated, and thus the risk of someone guessing or
@@ -28,7 +33,9 @@ const Home = () => {
 					</Col>
 				</Row>
 				<Row gap={1} css={{ paddingTop: "100px" }}>
+				
 					<Col css={{ marginTop: "100px" }}>
+					<center><Text h1>Randomly Generated QR Codes</Text></center>
 						<Text h3>
 							QR codes can be scanned quickly and accurately, reducing the time it takes for users to gain
 							access to a resource. This can help to improve productivity and reduce waiting times for
@@ -41,7 +48,7 @@ const Home = () => {
 						<Image
 							width={400}
 							height={350}
-							src="https://cdn0.iconfinder.com/data/icons/barcode-and-qr-code-outline-1/64/KEY_QRCODE-lock-padlock-security-secure-512.png"
+							src="/images/index2.png"
 							alt="Default Image"
 							objectFit="contain"
 							css={{ borderRadius: "2rem" }}
@@ -53,16 +60,17 @@ const Home = () => {
 						<Image
 							width={450}
 							height={350}
-							src="https://cdn-icons-png.flaticon.com/512/1451/1451868.png"
+							src="/images/index3.png"
 							alt="Default Image"
 							objectFit="contain"
 							css={{ borderRadius: "2rem" }}
 						/>
 					</Col>
 					<Col css={{ marginTop: "100px", width: "3 rem" }}>
+					<center><Text h1>Much Safer, Much Faster</Text></center>
 						<Text h3>
 							An access management system can automate the process of creating and managing user accounts,
-							which saves time compared to manually creating and managing accounts.Access management
+							which saves time compared to manually creating and managing accounts. Access management
 							systems can enable users to reset their own passwords without having to contact IT support,
 							which saves time for both the users and the IT team.
 						</Text>

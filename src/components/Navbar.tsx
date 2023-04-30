@@ -5,7 +5,7 @@ import Image from "next/image";
 export default function App() {
 	return (
 		<div>
-			<Navbar isCompact variant="sticky" style={{ paddingBottom: "20px", paddingTop: "10px" }}>
+			<Navbar isCompact variant="sticky" style={{color:"black", paddingBottom: "20px", paddingTop: "10px" }}>
 				<Navbar.Brand>
 					<NextLink href="/">
 						{/* <Text h3 color="inherit" hideIn="xs" style={{ color: "black", marginTop: "5px" }}>
@@ -13,23 +13,24 @@ export default function App() {
 						</Text> */}
 						<Image src={logo} alt="logo" height={150} style={{ marginTop: "10px" }} />
 					</NextLink>
-					<Spacer x={2} />
+					<Spacer x={3} />
 					<Navbar.Content hideIn="xs" variant="underline">
-						<NextLink href="/features" style={{ color: "black", fontSize: "20px", fontWeight: "bold" }}>
+						<NextLink href="/features" style={{ color: "#212A3E", fontSize: "20px", fontWeight: "bold" }}>
 							Features
 						</NextLink>
-						<NextLink href="/pricing" style={{ color: "black", fontSize: "20px", fontWeight: "bold" }}>
+						
+						<NextLink href="/pricing" style={{ color: "#212A3E", fontSize: "20px", fontWeight: "bold" }}>
 							Pricing
 						</NextLink>
 					</Navbar.Content>
-				</Navbar.Brand>
+				</Navbar.Brand> 
 				<Navbar.Content>
 					<NextLink
 						href={"/auth/login"}
 						style={{
 							fontSize: "20px",
 							padding: "10px 20px",
-							backgroundColor: "blue",
+							backgroundColor: "	#2edaff",
 							color: "white",
 							borderRadius: "20px",
 							borderTop: "none",
