@@ -36,5 +36,3 @@ next-env.d.ts
 
 .idea/
 .code/
-
-src/axess-credentials.json
