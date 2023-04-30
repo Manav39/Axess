@@ -33,7 +33,8 @@ export default async function logoutAdmin(req: CustomApiRequest<{}>, res: Custom
 			userId: userId,
 			userUUID: userUUID,
 			permissionLevel: permissionLevel
-		}
+		},
+		createOrganizationLog: false
 	})
 	
 	res.setHeader(

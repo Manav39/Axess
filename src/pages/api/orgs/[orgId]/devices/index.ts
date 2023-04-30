@@ -81,7 +81,9 @@ async function createDevice(req: CustomApiRequest<CreateDeviceRequestBody, Creat
 			permissionLevel: permissionLevel,
 			deviceName: deviceName,
 			deviceUUID: deviceUUID
-		}
+		},
+		createOrganizationLog: true,
+		orgId: orgId
 	})
 	
 	res.status(200).json<CreateDeviceResponse>({

@@ -49,8 +49,10 @@ export default function LoginPage() {
 				const {userId, permissionLevel} = data;
 				AuthCtx.updateAuthData({
 					isAuthenticated: true,
-					userId: userName,
+					userId: userId,
 					permissionLevel: permissionLevel,
+					orgId: orgId,
+					tokenType: "CLIENT"
 				});
 				setInvalid((invalidData) => {
 					return {

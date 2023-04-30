@@ -16,12 +16,12 @@ import {
 	createLogEvent,
 	ORGS_DOC_COLLECTION_NAME,
 	ORGS_USERS_COLLECTION_NAME,
-	USER_ID_PROPERTY_NAME,
-	USER_PASS_PROPERTY_NAME
+	USER_ID_PROPERTY_NAME
 } from "@/utils/common";
 import {LoginUserResponse} from "@/utils/types/apiResponses";
 import {sign} from "jsonwebtoken";
 import {DecodedJWTCookie} from "@/utils/types";
+import {compare} from "bcryptjs";
 
 export default async function loginUser(req: CustomApiRequest<LoginUserRequestBody, LoginUserRequestParams>, res: CustomApiResponse) {
 	const middlewareStatus = await requireMiddlewareChecks(
@@ -56,10 +56,6 @@ export default async function loginUser(req: CustomApiRequest<LoginUserRequestBo
 		USER_ID_PROPERTY_NAME,
 		"==",
 		userId
-	).where(
-		USER_PASS_PROPERTY_NAME,
-		"==",
-		userPass
 	)
 	const queryResponse = await orgUserQuery.get()
 	if (queryResponse.empty) {
@@ -73,14 +69,28 @@ export default async function loginUser(req: CustomApiRequest<LoginUserRequestBo
 	const selectedDoc = queryResponse.docs[0]
 	const docId = selectedDoc.id;
 	const docData = selectedDoc.data()
-	const {permissionLevel, userId: docUserId} = docData
+	const {permissionLevel, userId: docUserId, userPass: encPass} = docData
+	
+	const passMatch = await compare(
+		userPass,
+		encPass
+	)
+	
+	if (!passMatch) {
+		res.status(400).json({
+			requestStatus: "ERR_INVALID_BODY_PARAMS",
+			invalidParams: ["userPass"]
+		})
+		return
+	}
 	
 	const signedCookie = sign(
 		{
 			permissionLevel: permissionLevel,
 			userId: docUserId,
 			userUUID: docId,
-			tokenType: "CLIENT"
+			tokenType: "CLIENT",
+			orgId: orgId
 		} as DecodedJWTCookie,
 		process.env.JWT_SECRET!
 	)
@@ -91,7 +101,9 @@ export default async function loginUser(req: CustomApiRequest<LoginUserRequestBo
 			userId: docUserId,
 			userUUID: docId,
 			permissionLevel: permissionLevel
-		}
+		},
+		createOrganizationLog: true,
+		orgId: orgId
 	})
 	
 	res.setHeader(

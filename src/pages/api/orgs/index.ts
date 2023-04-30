@@ -15,6 +15,7 @@ import {STRLEN_NZ, VALID_ORG_ID} from "@/utils/validatorUtils";
 import {db} from "@/utils/db";
 import {ORGS_DEVICE_COLLECTION_NAME, ORGS_DOC_COLLECTION_NAME, ORGS_USERS_COLLECTION_NAME} from "@/utils/common";
 import {v4 as uuidv4} from "uuid";
+import {hash} from "bcryptjs";
 
 export default async function createOrg(req: CustomApiRequest<CreateOrgBody>, res: CustomApiResponse) {
 	const middlewareStatus = await requireMiddlewareChecks(
@@ -59,12 +60,15 @@ export default async function createOrg(req: CustomApiRequest<CreateOrgBody>, re
 	const createdDeviceCollection = createdDoc.collection(ORGS_DEVICE_COLLECTION_NAME)
 	const createdUsersCollection = createdDoc.collection(ORGS_USERS_COLLECTION_NAME)
 	
+	const encodedPassword = await hash(
+		userPass, 10
+	)
 	
 	const createdUserUUID = uuidv4()
 	const createdUserDoc = createdUsersCollection.doc(createdUserUUID)
 	await createdUserDoc.set({
 		userId,
-		userPass,
+		userPass: encodedPassword,
 		permissionLevel: UserPermissionLevel.ADMINISTRATOR
 	})
 	

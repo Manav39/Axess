@@ -50,3 +50,27 @@ export type LoginAdminRequestBody = {
 	userPass: string,
 	adminSecret: string
 }
+
+export type BulkCreateRequestParams = OrgIdCommonParam
+
+export type AccessPointRequestBody = {
+	deviceId: string,
+	accessTimestamp: string
+	actionType: "CHECK_IN" | "CHECK_OUT"
+}
+
+export type AccessPointRequestParams = OrgIdCommonParam
+
+export type GetOrgLogsParams = OrgIdCommonParam & {
+	logPage?: string
+}
+
+export type GetGlobalOrgsLogsParams = {
+	logPage?: string
+}
+
+export type GetDeviceRequestBody = {}
+
+export type GetDeviceRequestParams = OrgIdCommonParam & {
+	deviceId: string
+}

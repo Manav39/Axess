@@ -31,7 +31,14 @@ export default async function logoutUser(req: CustomApiRequest<{}, LogoutUserReq
 		return
 	}
 	
-	const {userId, userUUID, permissionLevel, tokenType} = req.user!
+	const {userId, userUUID, permissionLevel, tokenType, orgId} = req.user!
+	
+	if (tokenType === "SUDO") {
+		res.status(403).json({
+			requestStatus: "ERR_AUTH_REQUIRED"
+		})
+		return
+	}
 	
 	await createLogEvent({
 		eventType: "USER_LOGOUT",
@@ -39,7 +46,9 @@ export default async function logoutUser(req: CustomApiRequest<{}, LogoutUserReq
 			userId: userId,
 			userUUID: userUUID,
 			permissionLevel: permissionLevel
-		}
+		},
+		createOrganizationLog: true,
+		orgId: orgId!
 	})
 	
 	res.setHeader(

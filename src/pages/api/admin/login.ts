@@ -9,11 +9,12 @@ import {
 } from "@/utils/customMiddleware";
 import {db} from "@/utils/db";
 import {STRLEN_NZ} from "@/utils/validatorUtils";
-import {createLogEvent, SUDO_COLLECTION_NAME, USER_ID_PROPERTY_NAME, USER_PASS_PROPERTY_NAME} from "@/utils/common";
+import {createLogEvent, SUDO_COLLECTION_NAME, USER_ID_PROPERTY_NAME} from "@/utils/common";
 import {LoginUserResponse} from "@/utils/types/apiResponses";
 import {sign} from "jsonwebtoken";
 import {DecodedJWTCookie, UserPermissionLevel} from "@/utils/types";
 import {LoginAdminRequestBody} from "@/utils/types/apiRequests";
+import {compare} from "bcryptjs";
 
 export default async function loginUser(req: CustomApiRequest<LoginAdminRequestBody>, res: CustomApiResponse) {
 	const middlewareStatus = await requireMiddlewareChecks(
@@ -45,10 +46,6 @@ export default async function loginUser(req: CustomApiRequest<LoginAdminRequestB
 		USER_ID_PROPERTY_NAME,
 		"==",
 		userId
-	).where(
-		USER_PASS_PROPERTY_NAME,
-		"==",
-		userPass
 	)
 	const queryResponse = await orgUserQuery.get()
 	if (queryResponse.empty) {
@@ -62,7 +59,20 @@ export default async function loginUser(req: CustomApiRequest<LoginAdminRequestB
 	const selectedDoc = queryResponse.docs[0]
 	const docId = selectedDoc.id;
 	const docData = selectedDoc.data()
-	const {userId: docUserId} = docData
+	const {userId: docUserId, userPass: dbPass} = docData
+	
+	const passwordMatch = await compare(
+		userPass,
+		dbPass
+	)
+	
+	if (!passwordMatch) {
+		res.status(400).json({
+			requestStatus: "ERR_INVALID_BODY_PARAMS",
+			invalidParams: ["userPass"]
+		})
+		return
+	}
 	
 	const signedCookie = sign(
 		{
@@ -80,7 +90,8 @@ export default async function loginUser(req: CustomApiRequest<LoginAdminRequestB
 			userId: docUserId,
 			userUUID: docId,
 			permissionLevel: UserPermissionLevel.SUPERUSER,
-		}
+		},
+		createOrganizationLog: false
 	})
 	
 	res.setHeader(

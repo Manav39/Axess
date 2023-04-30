@@ -9,7 +9,7 @@ export type LoggingEventType =
 		"CREATE" | "DELETE" | "UPDATE"
 	}` |
 	`USER_${
-		"ENTRY" | "EXIT"
+		"CHECK_IN" | "CHECK_OUT"
 	}` |
 	`SUDO_${
 		"LOGIN" | "LOGOUT"
@@ -40,12 +40,14 @@ export type LogEventArgs = ({
 	}
 } | {
 	eventType: `USER_${
-		"ENTRY" | "EXIT"
+		"CHECK_IN" | "CHECK_OUT"
 	}`,
 	eventData: {
 		userUUID: string,
 		userId: string,
-		permissionLevel: UserPermissionLevel
+		permissionLevel: UserPermissionLevel,
+		accessTimestamp: string,
+		deviceId: string
 	}
 } | {
 	eventType: `SUDO_${
@@ -56,6 +58,11 @@ export type LogEventArgs = ({
 		userId: string,
 		permissionLevel: UserPermissionLevel
 	}
+}) & ({
+	createOrganizationLog: false
+} | {
+	createOrganizationLog: true,
+	orgId: string
 })
 
 export enum UserPermissionLevel {
@@ -80,6 +87,7 @@ type APIResponseRequestStatus =
 	// 3xx
 	// 4xx
 	"ERR_BODY_REQUIRED" |
+	"ERR_INVALID_BODY" |
 	"ERR_INTERNAL_ERROR" |
 	"ERR_INVALID_METHOD" |
 	"ERR_INVALID_BODY_PARAMS" |
@@ -89,7 +97,8 @@ type APIResponseRequestStatus =
 	"ERR_AUTH_REQUIRED" |
 	"ERR_SUPERUSER_REQUIRED" |
 	"ERR_INSUFFICIENT_PERMISSION" |
-	"ERR_NOT_FOUND"
+	"ERR_NOT_FOUND" |
+	"ERR_CHECKED_IN" | "ERR_CHECKED_OUT"
 
 export interface APIResponse {
 	requestStatus: APIResponseRequestStatus
@@ -101,15 +110,25 @@ export interface DecodedJWTCookie {
 	userUUID: string,
 	userId: string,
 	permissionLevel: UserPermissionLevel,
-	tokenType: "SUDO" | "CLIENT"
+	tokenType: "SUDO" | "CLIENT",
+	orgId?: string
 }
 
 export type AuthData = {
 	isAuthenticated?: boolean,
 	userId?: string,
 	permissionLevel?: UserPermissionLevel
+	tokenType?: DecodedJWTCookie["tokenType"]
+	orgId?: string
 }
 
 export type AuthContextType = AuthData & {
 	updateAuthData: (newAuthData: AuthData) => void
+}
+
+export type BulkUserData = {
+	userUUID: string,
+	userId: string,
+	permissionLevel: UserPermissionLevel,
+	userPassword: string
 }
