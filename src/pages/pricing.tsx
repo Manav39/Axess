@@ -10,8 +10,8 @@ import { BsCurrencyRupee } from "react-icons/bs";
 const Pricing = () => {
 	return (
 		<Container display="flex" justify="center" style={{ marginTop: "50px" }}>
-			<Text h2 >Pricing</Text>
-					<Spacer y={1}/>
+			<Text h2>Pricing</Text>
+			<Spacer y={2} />
 			<Row gap={4}>
 				<Col>
 					<Card css={{ mw: "330px" }}>
@@ -30,9 +30,11 @@ const Pricing = () => {
 								<li>Online Support </li>
 								<li>Valid for 1 month </li>
 							</ul>
+							<Spacer y={0.5} />
 							<Text h2 style={{ textAlign: "center", marginRight: "1.5rem" }}>
 								FREE
 							</Text>
+							<Text h5>*Terms and Condition Only</Text>
 						</Card.Body>
 						<Card.Footer>
 							<Row justify="center">
@@ -62,7 +64,7 @@ const Pricing = () => {
 							</ul>
 							<Text h2 style={{ textAlign: "center", marginRight: "1.5rem" }}>
 								<BsCurrencyRupee size={30} />
-								999  <Text h6>per month</Text>
+								999 <Text h6>per month</Text>
 							</Text>
 						</Card.Body>
 
