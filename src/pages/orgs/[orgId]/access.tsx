@@ -30,6 +30,7 @@ export default function AccessDevice(): JSX.Element {
 		if (isSuccess && data) {
 			const {requestStatus} = data
 			if (requestStatus === "SUCCESS") {
+				router.push("/")
 			}
 		}
 	}

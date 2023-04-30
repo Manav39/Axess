@@ -11,7 +11,13 @@ import {LogoutUserRequestParams} from "@/utils/types/apiRequests";
 export default function App() {
 	const AuthCtx = useContext<AuthContextType>(AuthContext);
 	const attemptLogout = useCallback(async () => {
-		const {orgId, tokenType} = AuthCtx
+		const {orgId, tokenType, isAuthenticated} = AuthCtx
+		
+		if (!isAuthenticated) {
+			return
+		}
+		
+		console.table(AuthCtx)
 		
 		if (tokenType === "CLIENT") {
 			let {
