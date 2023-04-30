@@ -3,16 +3,74 @@ import {default as NextLink} from "next/link";
 import logo from "../assets/logo-removebg-preview.png";
 import Image from "next/image";
 import {AuthContext} from "@/pages/_app";
-import {useContext} from "react";
-import {AuthContextType, UserPermissionLevel} from "@/utils/types";
+import {useCallback, useContext} from "react";
+import {APIResponse, AuthContextType, UserPermissionLevel} from "@/utils/types";
+import {makeAPIRequest} from "@/utils/apiHandler";
+import {LogoutUserRequestParams} from "@/utils/types/apiRequests";
 
 export default function App() {
 	const AuthCtx = useContext<AuthContextType>(AuthContext);
-	const attemptLogout = () => {
-		AuthCtx.updateAuthData({
-			isAuthenticated: false,
-		});
-	};
+	const attemptLogout = useCallback(async () => {
+		const {orgId, tokenType} = AuthCtx
+		
+		if (tokenType === "CLIENT") {
+			let {
+				isSuccess,
+				data,
+				error,
+				isError,
+				code
+			} = await makeAPIRequest<APIResponse, {}, LogoutUserRequestParams>({
+				endpointPath: "/api/orgs/:orgId/auth/logout",
+				requestMethod: "POST",
+				queryParams: {
+					orgId: orgId!
+				}
+			})
+			
+			if (isError && error) {
+				console.error(error)
+				return
+			}
+			
+			if (isSuccess && data) {
+				if (data.requestStatus === "SUCCESS") {
+					AuthCtx.updateAuthData({
+						isAuthenticated: false,
+						orgId: undefined,
+						tokenType: undefined,
+						permissionLevel: undefined,
+						userId: undefined
+					});
+				}
+			}
+		}
+		
+		if (tokenType === "SUDO") {
+			let {isSuccess, data, error, isError, code} = await makeAPIRequest({
+				endpointPath: "/api/sudo/logout",
+				requestMethod: "POST",
+			})
+			
+			if (isError && error) {
+				console.error(error)
+				return
+			}
+			
+			if (isSuccess && data) {
+				if (data.requestStatus === "SUCCESS") {
+					AuthCtx.updateAuthData({
+						isAuthenticated: false,
+						orgId: undefined,
+						tokenType: undefined,
+						permissionLevel: undefined,
+						userId: undefined
+					});
+				}
+			}
+		}
+	}, []);
+	
 	return (
 		<div>
 			<Navbar isCompact variant="sticky" style={{color: "black", paddingBottom: "20px", paddingTop: "10px"}}>
@@ -89,7 +147,10 @@ export default function App() {
 								null
 							)}
 							<Button
-								onClick={attemptLogout}
+								onClick={() => {
+									console.log("Logging out")
+									attemptLogout()
+								}}
 								style={{
 									fontSize: "20px",
 									padding: "10px 20px",
