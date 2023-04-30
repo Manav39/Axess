@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import QRCode from "react-qr-code";
 import { AuthContext } from "@/pages/_app";
 import { useContext } from "react";
+import { Container, Text } from "@nextui-org/react";
 export type DeviceQRPageProps = {
 	orgId: string;
 	deviceData: {
@@ -45,13 +46,20 @@ export default function DeviceQRPage(props: DeviceQRPageProps & NavbarControl) {
 	} = props;
 	useEffect(() => {
 		props.setShowNavbar(false);
-		setQRValue(
-			`https://axess.vercel.app/orgs/${AuthCtx.orgId}/access?deviceId=${deviceUUID}&deviceName=${deviceName}`
-		);
+		setQRValue(`https://axess.vercel.app/orgs/${orgId}/access?deviceId=${deviceUUID}&deviceName=${deviceName}`);
 		return () => {
 			props.setShowNavbar(true);
 		};
 	}, []);
 
-	return <QRCode value={qrValue} />;
+	return (
+		<>
+			<Container display="flex" direction="row" justify="center" style={{ marginTop: "200px" }}>
+				<QRCode value={qrValue} />
+			</Container>
+			<Text h2 style={{ textAlign: "center" }}>
+				{props.deviceData.deviceName}
+			</Text>
+		</>
+	);
 }
