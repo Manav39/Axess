@@ -3,6 +3,9 @@ import {GetOrgDevicesParams, OrgIdCommonParam} from "@/utils/types/apiRequests";
 import {NavbarControl} from "@/utils/types";
 import {GetDevicesResponse} from "@/utils/types/apiResponses";
 import {makeAPIRequest} from "@/utils/apiHandler";
+import {AuthContext} from "@/pages/_app";
+import Link from "next/link";
+import {useContext} from "react";
 
 export type DeviceList = {
 	deviceList: GetDevicesResponse["orgDevices"]
@@ -51,7 +54,23 @@ export const getServerSideProps: GetServerSideProps<DeviceList, OrgIdCommonParam
 export default function DeviceList(props: DeviceList & NavbarControl) {
 	console.table(props.deviceList)
 	
+	const authctx = useContext(AuthContext)
+	
 	return (
-		<></>
+		<ol>
+			{
+				props.deviceList.map((device) => {
+					return (
+						<li key={device.deviceId}>
+							<Link
+								href={`/orgs/${authctx.orgId!}/devices/${device.deviceId}`}
+							>
+								{device.deviceId}
+							</Link>
+						</li>
+					)
+				})
+			}
+		</ol>
 	)
 }
