@@ -46,19 +46,29 @@ export default function AccessDevice(): JSX.Element {
 			alignItems={"center"}
 			direction={"column"}
 		>
-			<h2>
-				{deviceName}
-			</h2>
-			<Button
-				onClick={() => makeReq("CHECK_IN")}
-			>
-				Check In
-			</Button>
-			<Button
-				onClick={() => makeReq("CHECK_OUT")}
-			>
-				Check Out
-			</Button>
+			{authCtx.isAuthenticated ? (
+				<>
+					<h2>
+						{deviceName}
+					</h2>
+					<Button
+						onClick={() => makeReq("CHECK_IN")}
+					>
+						Check In
+					</Button>
+					<Button
+						onClick={() => makeReq("CHECK_OUT")}
+					>
+						Check Out
+					</Button>
+				</>
+			) : (
+				<>
+					<h2>
+						You are not authenticated
+					</h2>
+				</>
+			)}
 		</Container>
 	)
 }
