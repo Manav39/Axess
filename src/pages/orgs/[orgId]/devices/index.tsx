@@ -49,6 +49,8 @@ export const getServerSideProps: GetServerSideProps<DeviceList, OrgIdCommonParam
 }
 
 export default function DeviceList(props: DeviceList & NavbarControl) {
+	console.table(props.deviceList)
+	
 	return (
 		<></>
 	)
