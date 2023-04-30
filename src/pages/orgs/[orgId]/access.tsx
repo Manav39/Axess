@@ -38,15 +38,13 @@ export default function AccessDevice(): JSX.Element {
 		<Container
 			css={{
 				width: "100vw",
-				height: "90vh"
+				height: "90vh",
+				gap: 24
 			}}
 			display={"flex"}
 			justify={"center"}
 			alignItems={"center"}
 			direction={"column"}
-			css={{
-				gap: 24
-			}}
 		>
 			<h2>
 				{deviceName}
