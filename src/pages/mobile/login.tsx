@@ -8,14 +8,17 @@ import { LoginUserResponse } from "@/utils/types/apiResponses";
 import { AuthContextType } from "@/utils/types";
 import { AuthContext } from "../_app";
 import { useRouter } from "next/router";
+import { toast, ToastContainer } from "react-toastify"; // Correct import for ToastContainer
+import "react-toastify/dist/ReactToastify.css"; // Import toast styles
+
 export default function LoginMobile(props: any) {
 	useEffect(() => {
 		props.setShowNavbar(false);
-
 		return () => {
 			props.setShowNavbar(true);
 		};
 	}, []);
+
 	const router = useRouter();
 	const AuthCtx = useContext<AuthContextType>(AuthContext);
 	const [userName, setUserName] = useState("");
@@ -31,6 +34,7 @@ export default function LoginMobile(props: any) {
 		userPass: false,
 		orgId: false,
 	});
+
 	const attemptLogin = useCallback(async () => {
 		const { isSuccess, isError, code, data, error } = await makeAPIRequest<
 			LoginUserResponse,
@@ -47,10 +51,13 @@ export default function LoginMobile(props: any) {
 				orgId: orgId,
 			},
 		});
+
 		if (isError && error) {
 			console.error(error);
+			toast.error("Something went wrong! Please try again.", { position: "top-center" }); // Show error toast
 			return;
 		}
+
 		if (isSuccess && data) {
 			const { requestStatus } = data;
 			if (requestStatus === "SUCCESS") {
@@ -60,49 +67,48 @@ export default function LoginMobile(props: any) {
 					userId: userName,
 					permissionLevel: permissionLevel,
 				});
-				setInvalid((invalidData) => {
-					return {
-						...invalidData,
-						orgId: false,
-						userId: false,
-						userPass: false,
-					};
-				});
+				setInvalid((invalidData) => ({
+					...invalidData,
+					orgId: false,
+					userId: false,
+					userPass: false,
+				}));
+				toast.success("Login successful!", { position: "top-center" }); // Show success toast
 				router.push("/");
 			}
+
 			if (requestStatus === "ERR_INVALID_QUERY_PARAMS") {
-				setInvalid((invalidData) => {
-					return {
-						...invalidData,
-						orgId: true,
-					};
-				});
+				setInvalid((invalidData) => ({
+					...invalidData,
+					orgId: true,
+				}));
+				toast.error("Invalid Organization ID!", { position: "top-center" }); // Show error toast
 			}
+
 			if (requestStatus === "ERR_INVALID_BODY_PARAMS") {
-				setInvalid((invalidData) => {
-					return {
-						...invalidData,
-						userId: true,
-						userPass: true,
-					};
-				});
+				setInvalid((invalidData) => ({
+					...invalidData,
+					userId: true,
+					userPass: true,
+				}));
+				toast.error("Invalid Username or Password!", { position: "top-center" }); // Show error toast
 			}
+
 			if (requestStatus === "ERR_MISSING_BODY_PARAMS") {
-				setMissing((missingParams) => {
-					return {
-						...missingParams,
-						userId: true,
-						userPass: true,
-					};
-				});
+				setMissing((missingParams) => ({
+					...missingParams,
+					userId: true,
+					userPass: true,
+				}));
+				toast.error("Please enter both username and password!", { position: "top-center" }); // Show error toast
 			}
+
 			if (requestStatus === "ERR_MISSING_QUERY_PARAMS") {
-				setMissing((missingParams) => {
-					return {
-						...missingParams,
-						orgId: true,
-					};
-				});
+				setMissing((missingParams) => ({
+					...missingParams,
+					orgId: true,
+				}));
+				toast.error("Please enter Organization ID!", { position: "top-center" }); // Show error toast
 			}
 		}
 	}, [userName, orgId, password]);
@@ -163,6 +169,9 @@ export default function LoginMobile(props: any) {
 					</Button>
 				</Row>
 			</Container>
+
+			{/* Corrected ToastContainer */}
+			<ToastContainer />
 		</>
 	);
 }

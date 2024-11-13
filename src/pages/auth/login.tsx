@@ -8,6 +8,9 @@ import { LoginUserResponse } from "@/utils/types/apiResponses";
 import { AuthContextType } from "@/utils/types";
 import { AuthContext } from "../_app";
 import { useRouter } from "next/router";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 export default function LoginPage() {
 	const router = useRouter();
 	const AuthCtx = useContext<AuthContextType>(AuthContext);
@@ -24,6 +27,7 @@ export default function LoginPage() {
 		userPass: false,
 		orgId: false,
 	});
+
 	const attemptLogin = useCallback(async () => {
 		const { isSuccess, isError, code, data, error } = await makeAPIRequest<
 			LoginUserResponse,
@@ -40,10 +44,13 @@ export default function LoginPage() {
 				orgId: orgId,
 			},
 		});
+
 		if (isError && error) {
 			console.error(error);
+			toast.error("An error occurred during login.");
 			return;
 		}
+
 		if (isSuccess && data) {
 			const { requestStatus } = data;
 			if (requestStatus === "SUCCESS") {
@@ -53,51 +60,50 @@ export default function LoginPage() {
 					userId: userId,
 					permissionLevel: permissionLevel,
 					orgId: orgId,
-					tokenType: "CLIENT"
+					tokenType: "CLIENT",
 				});
-				setInvalid((invalidData) => {
-					return {
-						...invalidData,
-						orgId: false,
-						userId: false,
-						userPass: false,
-					};
-				});
+				setInvalid((invalidData) => ({
+					...invalidData,
+					orgId: false,
+					userId: false,
+					userPass: false,
+				}));
+				toast.success("Login successful!");
 				router.push("/");
 			}
+
 			if (requestStatus === "ERR_INVALID_QUERY_PARAMS") {
-				setInvalid((invalidData) => {
-					return {
-						...invalidData,
-						orgId: true,
-					};
-				});
+				setInvalid((invalidData) => ({
+					...invalidData,
+					orgId: true,
+				}));
+				toast.error("Invalid Organization ID.");
 			}
+
 			if (requestStatus === "ERR_INVALID_BODY_PARAMS") {
-				setInvalid((invalidData) => {
-					return {
-						...invalidData,
-						userId: true,
-						userPass: true,
-					};
-				});
+				setInvalid((invalidData) => ({
+					...invalidData,
+					userId: true,
+					userPass: true,
+				}));
+				toast.error("Invalid username or password.");
 			}
+
 			if (requestStatus === "ERR_MISSING_BODY_PARAMS") {
-				setMissing((missingParams) => {
-					return {
-						...missingParams,
-						userId: true,
-						userPass: true,
-					};
-				});
+				setMissing((missingParams) => ({
+					...missingParams,
+					userId: true,
+					userPass: true,
+				}));
+				toast.warning("Username and password are required.");
 			}
+
 			if (requestStatus === "ERR_MISSING_QUERY_PARAMS") {
-				setMissing((missingParams) => {
-					return {
-						...missingParams,
-						orgId: true,
-					};
-				});
+				setMissing((missingParams) => ({
+					...missingParams,
+					orgId: true,
+				}));
+				toast.warning("Organization ID is required.");
 			}
 		}
 	}, [userName, orgId, password]);
@@ -158,6 +164,9 @@ export default function LoginPage() {
 					</Button>
 				</Row>
 			</Container>
+
+			{/* Toast Container for notifications */}
+			<ToastContainer />
 		</>
 	);
 }
