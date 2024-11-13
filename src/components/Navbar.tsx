@@ -133,6 +133,12 @@ export default function App() {
 							{AuthCtx.permissionLevel === UserPermissionLevel.ADMINISTRATOR ? (
 								<>
 									<NextLink
+										href={`/sudo/create_org`}
+										style={{ color: "#212A3E", fontSize: "20px", fontWeight: "bold" }}
+									>
+										Create Org
+									</NextLink>
+									<NextLink
 										href={`/orgs`}
 										style={{ color: "#212A3E", fontSize: "20px", fontWeight: "bold" }}
 									>
