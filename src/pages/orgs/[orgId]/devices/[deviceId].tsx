@@ -71,7 +71,7 @@ export default function DeviceQRPage(props: DeviceQRPageProps & NavbarControl) {
 
 	useEffect(() => {
 		props.setShowNavbar(false);
-		setQRValue(`https://axess.vercel.app/orgs/${orgId}/access?deviceId=${deviceUUID}&deviceName=${deviceName}`);
+		setQRValue(`https://axess-dun.vercel.app/orgs/${orgId}/access?deviceId=${deviceUUID}&deviceName=${deviceName}`);
 		return () => {
 			props.setShowNavbar(true);
 		};
